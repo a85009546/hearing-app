@@ -39,8 +39,8 @@
         }
 
         .input-section {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
+            display: flex;
+            flex-direction: column;
             gap: 30px;
             margin-bottom: 30px;
         }
@@ -60,10 +60,13 @@
             font-size: 18px;
         }
 
+        /* 確保輸入框在同一條水平線上 */
         .test-inputs {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
+            display: flex;
+            flex-direction: row;
+            justify-content: space-around;
             gap: 10px;
+            flex-wrap: wrap;
         }
 
         .input-group {
@@ -182,19 +185,40 @@
             font-size: 14px;
         }
 
-        @media (max-width: 768px) {
-            .container {
-                padding: 20px;
-            }
-            
-            .input-section {
-                grid-template-columns: 1fr;
-                gap: 20px;
-            }
-            
-            .title {
-                font-size: 24px;
-            }
+        /* 訊息彈窗樣式 */
+        .message-box {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.5);
+            display: none; /* 預設隱藏 */
+            justify-content: center;
+            align-items: center;
+            z-index: 1000;
+        }
+        .message-content {
+            background: white;
+            padding: 25px;
+            border-radius: 15px;
+            text-align: center;
+            max-width: 300px;
+            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.1);
+        }
+        .message-content button {
+            margin-top: 15px;
+            padding: 10px 25px;
+            border: none;
+            border-radius: 8px;
+            background: #667eea;
+            color: white;
+            cursor: pointer;
+            font-weight: bold;
+            transition: background 0.2s ease;
+        }
+        .message-content button:hover {
+            background: #5a6cd4;
         }
     </style>
 </head>
@@ -278,10 +302,31 @@
         </div>
     </div>
 
+    <!-- 訊息彈窗 -->
+    <div id="messageBox" class="message-box">
+        <div class="message-content">
+            <p id="messageText"></p>
+            <button onclick="hideMessage()">確認</button>
+        </div>
+    </div>
+
     <script>
         let currentInputIndex = 0;
         const inputFields = ['left1', 'left2', 'left3', 'left4', 'right1', 'right2', 'right3', 'right4'];
         const inputLabels = ['左耳 500Hz', '左耳 1000Hz', '左耳 2000Hz', '左耳 4000Hz', '右耳 500Hz', '右耳 1000Hz', '右耳 2000Hz', '右耳 4000Hz'];
+        const messageBox = document.getElementById('messageBox');
+        const messageText = document.getElementById('messageText');
+
+        // 顯示訊息彈窗
+        function showMessage(text) {
+            messageText.textContent = text;
+            messageBox.style.display = 'flex';
+        }
+
+        // 隱藏訊息彈窗
+        function hideMessage() {
+            messageBox.style.display = 'none';
+        }
 
         // 初始化
         function init() {
@@ -291,7 +336,11 @@
 
         // 更新當前輸入提示
         function updateCurrentInput() {
-            document.querySelector('.current-input').textContent = `當前輸入：${inputLabels[currentInputIndex]}`;
+            if (currentInputIndex < inputLabels.length) {
+                document.querySelector('.current-input').textContent = `當前輸入：${inputLabels[currentInputIndex]}`;
+            } else {
+                 document.querySelector('.current-input').textContent = '所有數值已輸入';
+            }
         }
 
         // 設置當前輸入框的高亮
@@ -309,14 +358,16 @@
 
         // 輸入數字
         function inputNumber(num) {
-            if (currentInputIndex >= inputFields.length) return;
+            if (currentInputIndex >= inputFields.length) {
+                showMessage('所有輸入欄位都已填寫完畢。');
+                return;
+            }
             
             const currentField = document.getElementById(inputFields[currentInputIndex]);
             const currentValue = currentField.value;
             
             if (currentValue.length < 3) {
                 currentField.value = currentValue + num;
-                calculate(); // 自動計算
             }
         }
 
@@ -326,7 +377,6 @@
             
             const currentField = document.getElementById(inputFields[currentInputIndex]);
             currentField.value = currentField.value.slice(0, -1);
-            calculate(); // 自動計算
         }
 
         // 下一個輸入框
@@ -335,6 +385,8 @@
                 currentInputIndex++;
                 updateCurrentInput();
                 setActiveInput();
+            } else {
+                showMessage('所有輸入欄位都已填寫完畢。');
             }
         }
 
@@ -354,7 +406,6 @@
 
         // 診斷計算邏輯
         function calculateDiagnosis(values) {
-            // 這是示例診斷邏輯，你可以根據實際醫療標準調整
             const leftAvg = (values[0] + values[1] + values[2] + values[3]) / 4;
             const rightAvg = (values[4] + values[5] + values[6] + values[7]) / 4;
             const totalAvg = (leftAvg + rightAvg) / 2;
@@ -382,7 +433,6 @@
                 description = '極重度聽力損失：幾乎無法聽到聲音，需要緊急醫療評估';
             }
             
-            // 檢查雙耳差異
             const earDifference = Math.abs(leftAvg - rightAvg);
             if (earDifference > 15) {
                 code += '-A';
@@ -392,14 +442,13 @@
             return { code, description };
         }
 
-        // 計算診斷
+        // 診斷功能
         function calculate() {
             const values = inputFields.map(id => {
                 const value = document.getElementById(id).value;
                 return value === '' ? 0 : parseInt(value);
             });
             
-            // 檢查是否所有數值都已輸入
             const allFilled = inputFields.every(id => document.getElementById(id).value !== '');
             
             if (allFilled) {
