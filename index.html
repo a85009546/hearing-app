@@ -1,237 +1,429 @@
 <!DOCTYPE html>
-<html lang="zh-Hant">
+<html lang="zh-TW">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>聽力診斷計算機</title>
-    <script src="https://cdn.tailwindcss.com"></script>
+    <title>聽力測試診斷計算器</title>
     <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
         body {
-            font-family: 'Inter', sans-serif;
-            background-color: #f0f2f5;
+            font-family: 'Arial', sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
             display: flex;
             justify-content: center;
             align-items: center;
-            min-height: 100vh;
-            margin: 0;
-            overflow: auto;
-            -webkit-font-smoothing: antialiased;
-            -moz-osx-font-smoothing: grayscale;
+            padding: 20px;
         }
-        .app-container {
-            @apply max-w-lg w-full p-4 sm:p-8 space-y-6 bg-white dark:bg-gray-800 rounded-3xl shadow-2xl;
+
+        .container {
+            background: white;
+            border-radius: 20px;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.1);
+            padding: 30px;
+            max-width: 800px;
+            width: 100%;
         }
-        .input-grid {
-            @apply grid grid-cols-4 gap-4 justify-items-center;
+
+        .title {
+            text-align: center;
+            color: #333;
+            margin-bottom: 30px;
+            font-size: 28px;
+            font-weight: bold;
         }
-        .number-input-container {
-            @apply flex justify-center;
+
+        .input-section {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 30px;
+            margin-bottom: 30px;
         }
-        .number-input {
-            @apply text-center text-2xl sm:text-3xl p-3 border-2 border-gray-300 dark:border-gray-600 rounded-xl bg-gray-50 dark:bg-gray-700 focus:outline-none focus:ring-4 focus:ring-blue-500 focus:border-transparent transition-colors w-20;
-            color: #1f2937; /* Explicitly set text color */
+
+        .ear-group {
+            background: #f8f9ff;
+            padding: 20px;
+            border-radius: 15px;
+            border: 2px solid #e1e8ff;
         }
-        .dark .number-input {
-            color: #e5e7eb; /* Explicitly set text color for dark mode */
+
+        .ear-title {
+            text-align: center;
+            font-weight: bold;
+            color: #4a5568;
+            margin-bottom: 15px;
+            font-size: 18px;
         }
-        .keypad-button {
-            @apply flex items-center justify-center p-4 sm:p-5 text-2xl sm:text-3xl font-bold rounded-2xl shadow-md transition-transform transform hover:scale-105 active:bg-gray-200 active:shadow-inner;
-            aspect-ratio: 1 / 1;
+
+        .test-inputs {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 10px;
+        }
+
+        .input-group {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        .input-label {
+            font-size: 12px;
+            color: #666;
+            margin-bottom: 5px;
+            font-weight: 500;
+        }
+
+        .input-field {
+            width: 80px;
+            height: 40px;
+            border: 2px solid #e1e8ff;
+            border-radius: 8px;
+            text-align: center;
+            font-size: 16px;
+            font-weight: bold;
+            color: #333;
+            background: white;
+            transition: all 0.3s ease;
+        }
+
+        .input-field:focus {
+            border-color: #667eea;
+            box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+            outline: none;
+        }
+
+        .input-field.active {
+            border-color: #667eea;
+            box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.2);
+        }
+
+        .keypad {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 10px;
+            max-width: 300px;
+            margin: 0 auto 30px auto;
+        }
+
+        .key {
+            height: 60px;
+            border: none;
+            border-radius: 12px;
+            font-size: 18px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            color: white;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+        }
+
+        .key.number {
+            background: linear-gradient(135deg, #667eea, #764ba2);
+        }
+
+        .key.number:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 12px rgba(0,0,0,0.2);
+        }
+
+        .key.number:active {
+            transform: translateY(0);
+        }
+
+        .key.action {
+            background: linear-gradient(135deg, #f093fb, #f5576c);
+        }
+
+        .key.action:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 12px rgba(0,0,0,0.2);
+        }
+
+        .key.clear {
+            background: linear-gradient(135deg, #ff6b6b, #ee5a52);
+        }
+
+        .key.clear:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 12px rgba(0,0,0,0.2);
+        }
+
+        .result-section {
+            background: linear-gradient(135deg, #a8edea, #fed6e3);
+            padding: 20px;
+            border-radius: 15px;
+            text-align: center;
+        }
+
+        .diagnosis-code {
+            font-size: 32px;
+            font-weight: bold;
+            color: #2d3748;
+            margin-bottom: 10px;
+        }
+
+        .diagnosis-description {
+            font-size: 16px;
+            color: #4a5568;
+            line-height: 1.5;
+        }
+
+        .current-input {
+            text-align: center;
+            margin-bottom: 20px;
+            font-weight: bold;
+            color: #667eea;
+            font-size: 14px;
+        }
+
+        @media (max-width: 768px) {
+            .container {
+                padding: 20px;
+            }
+            
+            .input-section {
+                grid-template-columns: 1fr;
+                gap: 20px;
+            }
+            
+            .title {
+                font-size: 24px;
+            }
         }
     </style>
 </head>
-<body class="bg-gray-100 dark:bg-gray-900 text-gray-900 dark:text-white">
-
-    <div class="app-container">
-        <h1 class="text-3xl sm:text-4xl font-extrabold text-center text-gray-900 dark:text-white">聽力診斷計算機</h1>
+<body>
+    <div class="container">
+        <h1 class="title">聽力測試診斷計算器</h1>
         
-        <!-- 輸入區域 -->
-        <div class="input-section space-y-4">
-            <!-- 左耳輸入 -->
-            <div class="ear-input-group">
-                <label for="left-ear-1" class="block text-lg font-semibold text-center mb-2">左耳</label>
-                <div class="input-grid">
-                    <input type="text" id="left-ear-1" class="number-input" placeholder="" maxlength="3" readonly data-ear="left">
-                    <input type="text" id="left-ear-2" class="number-input" placeholder="" maxlength="3" readonly data-ear="left">
-                    <input type="text" id="left-ear-3" class="number-input" placeholder="" maxlength="3" readonly data-ear="left">
-                    <input type="text" id="left-ear-4" class="number-input" placeholder="" maxlength="3" readonly data-ear="left">
+        <div class="input-section">
+            <div class="ear-group">
+                <div class="ear-title">左耳 (Left Ear)</div>
+                <div class="test-inputs">
+                    <div class="input-group">
+                        <div class="input-label">500Hz</div>
+                        <input type="text" class="input-field" id="left1" maxlength="3" readonly>
+                    </div>
+                    <div class="input-group">
+                        <div class="input-label">1000Hz</div>
+                        <input type="text" class="input-field" id="left2" maxlength="3" readonly>
+                    </div>
+                    <div class="input-group">
+                        <div class="input-label">2000Hz</div>
+                        <input type="text" class="input-field" id="left3" maxlength="3" readonly>
+                    </div>
+                    <div class="input-group">
+                        <div class="input-label">4000Hz</div>
+                        <input type="text" class="input-field" id="left4" maxlength="3" readonly>
+                    </div>
                 </div>
             </div>
             
-            <!-- 右耳輸入 -->
-            <div class="ear-input-group">
-                <label for="right-ear-1" class="block text-lg font-semibold text-center mb-2">右耳</label>
-                <div class="input-grid">
-                    <input type="text" id="right-ear-1" class="number-input" placeholder="" maxlength="3" readonly data-ear="right">
-                    <input type="text" id="right-ear-2" class="number-input" placeholder="" maxlength="3" readonly data-ear="right">
-                    <input type="text" id="right-ear-3" class="number-input" placeholder="" maxlength="3" readonly data-ear="right">
-                    <input type="text" id="right-ear-4" class="number-input" placeholder="" maxlength="3" readonly data-ear="right">
+            <div class="ear-group">
+                <div class="ear-title">右耳 (Right Ear)</div>
+                <div class="test-inputs">
+                    <div class="input-group">
+                        <div class="input-label">500Hz</div>
+                        <input type="text" class="input-field" id="right1" maxlength="3" readonly>
+                    </div>
+                    <div class="input-group">
+                        <div class="input-label">1000Hz</div>
+                        <input type="text" class="input-field" id="right2" maxlength="3" readonly>
+                    </div>
+                    <div class="input-group">
+                        <div class="input-label">2000Hz</div>
+                        <input type="text" class="input-field" id="right3" maxlength="3" readonly>
+                    </div>
+                    <div class="input-group">
+                        <div class="input-label">4000Hz</div>
+                        <input type="text" class="input-field" id="right4" maxlength="3" readonly>
+                    </div>
                 </div>
             </div>
         </div>
 
-        <!-- 鍵盤區域 -->
-        <div class="keypad grid grid-cols-4 gap-2 sm:gap-4 p-4 bg-gray-200 dark:bg-gray-700 rounded-2xl shadow-inner">
-            <button class="keypad-button bg-gray-50 text-gray-800" data-value="1">1</button>
-            <button class="keypad-button bg-gray-50 text-gray-800" data-value="2">2</button>
-            <button class="keypad-button bg-gray-50 text-gray-800" data-value="3">3</button>
-            <button class="keypad-button bg-gray-50 text-gray-800" data-value="4">4</button>
-            <button class="keypad-button bg-gray-50 text-gray-800" data-value="5">5</button>
-            <button class="keypad-button bg-gray-50 text-gray-800" data-value="6">6</button>
-            <button class="keypad-button bg-gray-50 text-gray-800" data-value="7">7</button>
-            <button class="keypad-button bg-gray-50 text-gray-800" data-value="8">8</button>
-            <button class="keypad-button bg-gray-50 text-gray-800" data-value="0">0</button>
-            <button class="keypad-button bg-gray-50 text-gray-800" data-value="9">9</button>
-            <button class="keypad-button bg-gray-50 text-gray-800" data-value="00">00</button>
-            <button class="keypad-button bg-gray-400 text-gray-800 hover:bg-gray-500 active:bg-gray-600" data-action="backspace">←</button>
-            <button class="keypad-button bg-blue-500 text-white hover:bg-blue-600 active:bg-blue-700" data-action="next">→</button>
-            <button class="keypad-button bg-green-500 text-white hover:bg-green-600 active:bg-green-700" data-action="diagnose">診斷</button>
-            <button class="keypad-button bg-red-500 text-white hover:bg-red-600 active:bg-red-700" data-action="clear">清除</button>
+        <div class="current-input">當前輸入：左耳 500Hz</div>
+
+        <div class="keypad">
+            <button class="key number" onclick="inputNumber(1)">1</button>
+            <button class="key number" onclick="inputNumber(2)">2</button>
+            <button class="key number" onclick="inputNumber(3)">3</button>
+            <button class="key action" onclick="deleteNumber()">刪除</button>
+            
+            <button class="key number" onclick="inputNumber(4)">4</button>
+            <button class="key number" onclick="inputNumber(5)">5</button>
+            <button class="key number" onclick="inputNumber(6)">6</button>
+            <button class="key action" onclick="nextInput()">下一個</button>
+            
+            <button class="key number" onclick="inputNumber(7)">7</button>
+            <button class="key number" onclick="inputNumber(8)">8</button>
+            <button class="key number" onclick="inputNumber(9)">9</button>
+            <button class="key clear" onclick="clearAll()">清除全部</button>
+            
+            <button class="key number" onclick="inputNumber('00')">00</button>
+            <button class="key number" onclick="inputNumber(0)">0</button>
+            <button class="key action" onclick="calculate()">計算</button>
+            <button class="key action" onclick="calculate()">診斷</button>
         </div>
 
-        <!-- 診斷結果區域 -->
-        <div class="diagnosis-section mt-6">
-            <h2 class="text-xl sm:text-2xl font-bold mb-2">診斷結果</h2>
-            <div id="diagnosis-code" class="text-3xl font-extrabold text-center text-green-600 dark:text-green-400 p-2 sm:p-4 bg-gray-50 dark:bg-gray-800 rounded-xl mb-4">
-                等待輸入...
-            </div>
-            <div id="diagnosis-description" class="text-base sm:text-lg text-gray-700 dark:text-gray-300">
-                <p class="text-center">請輸入兩耳各四個聽力數字，然後點擊「診斷」按鈕。</p>
-            </div>
-        </div>
-    </div>
-
-    <!-- 訊息彈窗 -->
-    <div id="message-box" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 hidden">
-        <div class="bg-white dark:bg-gray-800 p-6 rounded-2xl shadow-2xl text-center max-w-xs w-full space-y-4">
-            <p id="message-text" class="text-gray-900 dark:text-white font-semibold text-lg"></p>
-            <button id="message-ok-btn" class="w-full bg-blue-500 text-white font-bold py-2 rounded-xl hover:bg-blue-600 transition-colors">確認</button>
+        <div class="result-section">
+            <div class="diagnosis-code" id="diagnosisCode">等待輸入</div>
+            <div class="diagnosis-description" id="diagnosisDescription">請輸入所有8個聽力數值後進行診斷</div>
         </div>
     </div>
 
     <script>
-        const leftInputs = Array.from(document.querySelectorAll('#left-ear-1, #left-ear-2, #left-ear-3, #left-ear-4'));
-        const rightInputs = Array.from(document.querySelectorAll('#right-ear-1, #right-ear-2, #right-ear-3, #right-ear-4'));
-        const allInputs = [...leftInputs, ...rightInputs];
-        const keypad = document.querySelector('.keypad');
-        const diagnosisCodeEl = document.getElementById('diagnosis-code');
-        const diagnosisDescriptionEl = document.getElementById('diagnosis-description');
-        const messageBox = document.getElementById('message-box');
-        const messageText = document.getElementById('message-text');
-        const messageOkBtn = document.getElementById('message-ok-btn');
-        let activeInput = allInputs[0];
-        
-        function showMessage(text) {
-            messageText.textContent = text;
-            messageBox.classList.remove('hidden');
+        let currentInputIndex = 0;
+        const inputFields = ['left1', 'left2', 'left3', 'left4', 'right1', 'right2', 'right3', 'right4'];
+        const inputLabels = ['左耳 500Hz', '左耳 1000Hz', '左耳 2000Hz', '左耳 4000Hz', '右耳 500Hz', '右耳 1000Hz', '右耳 2000Hz', '右耳 4000Hz'];
+
+        // 初始化
+        function init() {
+            updateCurrentInput();
+            setActiveInput();
         }
 
-        messageOkBtn.addEventListener('click', () => {
-            messageBox.classList.add('hidden');
-        });
+        // 更新當前輸入提示
+        function updateCurrentInput() {
+            document.querySelector('.current-input').textContent = `當前輸入：${inputLabels[currentInputIndex]}`;
+        }
 
-        function updateActiveInput() {
-            allInputs.forEach(input => input.classList.remove('border-blue-500', 'ring-4'));
-            if (activeInput) {
-                activeInput.classList.add('border-blue-500', 'ring-4');
+        // 設置當前輸入框的高亮
+        function setActiveInput() {
+            // 移除所有高亮
+            inputFields.forEach(id => {
+                document.getElementById(id).classList.remove('active');
+            });
+            
+            // 添加當前輸入框的高亮
+            if (currentInputIndex < inputFields.length) {
+                document.getElementById(inputFields[currentInputIndex]).classList.add('active');
             }
         }
 
-        allInputs.forEach(input => {
-            input.addEventListener('click', () => {
-                activeInput = input;
-                updateActiveInput();
+        // 輸入數字
+        function inputNumber(num) {
+            if (currentInputIndex >= inputFields.length) return;
+            
+            const currentField = document.getElementById(inputFields[currentInputIndex]);
+            const currentValue = currentField.value;
+            
+            if (currentValue.length < 3) {
+                currentField.value = currentValue + num;
+                calculate(); // 自動計算
+            }
+        }
+
+        // 刪除數字
+        function deleteNumber() {
+            if (currentInputIndex >= inputFields.length) return;
+            
+            const currentField = document.getElementById(inputFields[currentInputIndex]);
+            currentField.value = currentField.value.slice(0, -1);
+            calculate(); // 自動計算
+        }
+
+        // 下一個輸入框
+        function nextInput() {
+            if (currentInputIndex < inputFields.length - 1) {
+                currentInputIndex++;
+                updateCurrentInput();
+                setActiveInput();
+            }
+        }
+
+        // 清除所有數值
+        function clearAll() {
+            inputFields.forEach(id => {
+                document.getElementById(id).value = '';
+            });
+            currentInputIndex = 0;
+            updateCurrentInput();
+            setActiveInput();
+            
+            // 清除診斷結果
+            document.getElementById('diagnosisCode').textContent = '等待輸入';
+            document.getElementById('diagnosisDescription').textContent = '請輸入所有8個聽力數值後進行診斷';
+        }
+
+        // 診斷計算邏輯
+        function calculateDiagnosis(values) {
+            // 這是示例診斷邏輯，你可以根據實際醫療標準調整
+            const leftAvg = (values[0] + values[1] + values[2] + values[3]) / 4;
+            const rightAvg = (values[4] + values[5] + values[6] + values[7]) / 4;
+            const totalAvg = (leftAvg + rightAvg) / 2;
+            
+            let code = '';
+            let description = '';
+            
+            if (totalAvg <= 25) {
+                code = 'N001';
+                description = '正常聽力：聽力閾值在正常範圍內，無明顯聽力障礙';
+            } else if (totalAvg <= 40) {
+                code = 'M002';
+                description = '輕度聽力損失：可能在安靜環境下影響對話理解';
+            } else if (totalAvg <= 55) {
+                code = 'M003';
+                description = '中度聽力損失：日常對話可能受到影響，建議使用助聽設備';
+            } else if (totalAvg <= 70) {
+                code = 'M004';
+                description = '中重度聽力損失：需要助聽設備輔助，建議專業聽力評估';
+            } else if (totalAvg <= 90) {
+                code = 'S005';
+                description = '重度聽力損失：嚴重影響日常交流，需要專業醫療介入';
+            } else {
+                code = 'S006';
+                description = '極重度聽力損失：幾乎無法聽到聲音，需要緊急醫療評估';
+            }
+            
+            // 檢查雙耳差異
+            const earDifference = Math.abs(leftAvg - rightAvg);
+            if (earDifference > 15) {
+                code += '-A';
+                description += ' (注意：雙耳聽力存在顯著差異)';
+            }
+            
+            return { code, description };
+        }
+
+        // 計算診斷
+        function calculate() {
+            const values = inputFields.map(id => {
+                const value = document.getElementById(id).value;
+                return value === '' ? 0 : parseInt(value);
+            });
+            
+            // 檢查是否所有數值都已輸入
+            const allFilled = inputFields.every(id => document.getElementById(id).value !== '');
+            
+            if (allFilled) {
+                const diagnosis = calculateDiagnosis(values);
+                document.getElementById('diagnosisCode').textContent = diagnosis.code;
+                document.getElementById('diagnosisDescription').textContent = diagnosis.description;
+            } else {
+                const filledCount = inputFields.filter(id => document.getElementById(id).value !== '').length;
+                document.getElementById('diagnosisCode').textContent = `${filledCount}/8`;
+                document.getElementById('diagnosisDescription').textContent = '請繼續輸入剩餘的聽力數值';
+            }
+        }
+
+        // 點擊輸入框切換當前輸入
+        inputFields.forEach((id, index) => {
+            document.getElementById(id).addEventListener('click', () => {
+                currentInputIndex = index;
+                updateCurrentInput();
+                setActiveInput();
             });
         });
 
-        // 初始化
-        updateActiveInput();
-
-        keypad.addEventListener('click', (e) => {
-            const button = e.target.closest('button');
-            if (!button) return;
-
-            const action = button.dataset.action;
-            const value = button.dataset.value;
-
-            if (action === 'clear') {
-                allInputs.forEach(input => input.value = '');
-                diagnosisCodeEl.textContent = '等待輸入...';
-                diagnosisDescriptionEl.innerHTML = '<p class="text-center">請輸入兩耳各四個聽力數字，然後點擊「診斷」按鈕。</p>';
-                activeInput = allInputs[0];
-                updateActiveInput();
-            } else if (action === 'backspace') {
-                if (activeInput.value.length > 0) {
-                    activeInput.value = activeInput.value.slice(0, -1);
-                } else {
-                    const currentIndex = allInputs.indexOf(activeInput);
-                    if (currentIndex > 0) {
-                        activeInput = allInputs[currentIndex - 1];
-                        updateActiveInput();
-                    }
-                }
-            } else if (action === 'next') {
-                const currentIndex = allInputs.indexOf(activeInput);
-                if (currentIndex < allInputs.length - 1) {
-                    activeInput = allInputs[currentIndex + 1];
-                    updateActiveInput();
-                } else {
-                    showMessage('所有輸入欄位都已填寫完畢。');
-                }
-            } else if (action === 'diagnose') {
-                diagnose();
-            } else if (value !== undefined) {
-                if (activeInput.value.length < 3) {
-                    activeInput.value += value;
-                } else {
-                    showMessage('數字不能超過三位數。');
-                }
-            }
-        });
-
-        function diagnose() {
-            const leftNumbers = leftInputs.map(input => parseInt(input.value, 10));
-            const rightNumbers = rightInputs.map(input => parseInt(input.value, 10));
-
-            if (leftNumbers.some(isNaN) || rightNumbers.some(isNaN)) {
-                showMessage('請輸入兩耳的所有八個數字。');
-                return;
-            }
-
-            const totalSum = leftNumbers.reduce((sum, current) => sum + current, 0) + 
-                             rightNumbers.reduce((sum, current) => sum + current, 0);
-
-            let code = '';
-            let description = '';
-            let color = '';
-
-            if (totalSum >= 1200) {
-                code = '極重度聽損 (D4)';
-                description = '綜合總數值超過1200，可能為極重度聽力損失，建議立即尋求專業醫療協助。';
-                color = 'text-red-600 dark:text-red-400';
-            } else if (totalSum >= 800) {
-                code = '重度聽損 (D3)';
-                description = '綜合總數值超過800，可能為重度聽力損失，請務必進行更詳細的聽力檢查。';
-                color = 'text-orange-600 dark:text-orange-400';
-            } else if (totalSum >= 400) {
-                code = '中度聽損 (D2)';
-                description = '綜合總數值超過400，可能為中度聽力損失，建議進行專業聽力檢查。';
-                color = 'text-yellow-600 dark:text-yellow-400';
-            } else if (totalSum >= 100) {
-                code = '輕度聽損 (D1)';
-                description = '綜合總數值超過100，可能為輕度聽力損失。';
-                color = 'text-green-600 dark:text-green-400';
-            } else {
-                code = '聽力正常 (C0)';
-                description = '綜合總數值小於100，聽力狀況可能正常，但建議定期檢查。';
-                color = 'text-blue-600 dark:text-blue-400';
-            }
-
-            diagnosisCodeEl.textContent = code;
-            diagnosisCodeEl.className = `text-3xl font-extrabold text-center p-2 sm:p-4 bg-gray-50 dark:bg-gray-800 rounded-xl mb-4 ${color}`;
-            diagnosisDescriptionEl.innerHTML = `<p>${description}</p>`;
-        }
+        // 初始化程式
+        init();
     </script>
-
 </body>
 </html>
