@@ -12,9 +12,11 @@
             display: flex;
             justify-content: center;
             align-items: center;
-            height: 100vh;
+            min-height: 100vh;
             margin: 0;
-            overflow: hidden; /* Prevent scrolling on mobile */
+            overflow: auto; /* Allow scrolling for small screens */
+            -webkit-font-smoothing: antialiased;
+            -moz-osx-font-smoothing: grayscale;
         }
         .app-container {
             @apply max-w-lg w-full p-4 sm:p-8 space-y-6 bg-white dark:bg-gray-800 rounded-3xl shadow-2xl;
@@ -26,12 +28,8 @@
             @apply w-full text-center text-2xl sm:text-3xl p-3 border-2 border-gray-300 dark:border-gray-600 rounded-xl bg-gray-50 dark:bg-gray-700 focus:outline-none focus:ring-4 focus:ring-blue-500 focus:border-transparent transition-colors;
         }
         .keypad-button {
-            @apply flex items-center justify-center p-4 m-1 sm:p-5 text-2xl sm:text-3xl font-bold bg-gray-50 text-gray-800 rounded-2xl shadow-md transition-transform transform hover:scale-105 active:bg-gray-200 active:shadow-inner;
-            height: 64px;
-            width: 64px;
-        }
-        .diagnosis-section {
-            @apply p-4 sm:p-6 bg-gray-100 dark:bg-gray-700 rounded-2xl shadow-lg;
+            @apply flex items-center justify-center p-4 sm:p-5 text-2xl sm:text-3xl font-bold rounded-2xl shadow-md transition-transform transform hover:scale-105 active:bg-gray-200 active:shadow-inner;
+            aspect-ratio: 1 / 1;
         }
     </style>
 </head>
@@ -67,25 +65,25 @@
 
         <!-- 鍵盤區域 -->
         <div class="keypad grid grid-cols-4 gap-2 sm:gap-4 p-4 bg-gray-200 dark:bg-gray-700 rounded-2xl shadow-inner">
-            <button class="keypad-button" data-value="1">1</button>
-            <button class="keypad-button" data-value="2">2</button>
-            <button class="keypad-button" data-value="3">3</button>
-            <button class="keypad-button bg-red-500 text-white hover:bg-red-600 active:bg-red-700" data-action="clear">清除</button>
-            <button class="keypad-button" data-value="4">4</button>
-            <button class="keypad-button" data-value="5">5</button>
-            <button class="keypad-button" data-value="6">6</button>
-            <button class="keypad-button" data-value="00">00</button>
-            <button class="keypad-button" data-value="7">7</button>
-            <button class="keypad-button" data-value="8">8</button>
-            <button class="keypad-button" data-value="9">9</button>
-            <button class="keypad-button bg-blue-500 text-white col-span-1 row-span-2 hover:bg-blue-600 active:bg-blue-700" data-action="diagnose">診斷</button>
-            <button class="keypad-button col-span-2" data-value="0">0</button>
+            <button class="keypad-button bg-gray-50 text-gray-800" data-value="1">1</button>
+            <button class="keypad-button bg-gray-50 text-gray-800" data-value="2">2</button>
+            <button class="keypad-button bg-gray-50 text-gray-800" data-value="3">3</button>
+            <button class="keypad-button bg-gray-50 text-gray-800" data-value="4">4</button>
+            <button class="keypad-button bg-gray-50 text-gray-800" data-value="5">5</button>
+            <button class="keypad-button bg-gray-50 text-gray-800" data-value="6">6</button>
+            <button class="keypad-button bg-gray-50 text-gray-800" data-value="7">7</button>
+            <button class="keypad-button bg-gray-50 text-gray-800" data-value="8">8</button>
+            <button class="keypad-button bg-gray-50 text-gray-800" data-value="0">0</button>
+            <button class="keypad-button bg-gray-50 text-gray-800" data-value="9">9</button>
+            <button class="keypad-button bg-gray-50 text-gray-800" data-value="00">00</button>
             <button class="keypad-button bg-gray-400 text-gray-800 hover:bg-gray-500 active:bg-gray-600" data-action="backspace">←</button>
-            <button class="keypad-button col-span-4 bg-yellow-500 text-white font-bold text-xl hover:bg-yellow-600 active:bg-yellow-700" data-action="next">→</button>
+            <button class="keypad-button bg-blue-500 text-white hover:bg-blue-600 active:bg-blue-700" data-action="next">→</button>
+            <button class="keypad-button bg-green-500 text-white hover:bg-green-600 active:bg-green-700" data-action="diagnose">診斷</button>
+            <button class="keypad-button bg-red-500 text-white hover:bg-red-600 active:bg-red-700" data-action="clear">清除</button>
         </div>
 
         <!-- 診斷結果區域 -->
-        <div class="diagnosis-section">
+        <div class="diagnosis-section mt-6">
             <h2 class="text-xl sm:text-2xl font-bold mb-2">診斷結果</h2>
             <div id="diagnosis-code" class="text-3xl font-extrabold text-center text-green-600 dark:text-green-400 p-2 sm:p-4 bg-gray-50 dark:bg-gray-800 rounded-xl mb-4">
                 等待輸入...
@@ -109,7 +107,6 @@
         const rightInputs = Array.from(document.querySelectorAll('#right-ear-1, #right-ear-2, #right-ear-3, #right-ear-4'));
         const allInputs = [...leftInputs, ...rightInputs];
         const keypad = document.querySelector('.keypad');
-        const nextButton = document.querySelector('[data-action="next"]');
         const diagnosisCodeEl = document.getElementById('diagnosis-code');
         const diagnosisDescriptionEl = document.getElementById('diagnosis-description');
         const messageBox = document.getElementById('message-box');
@@ -139,7 +136,7 @@
                 updateActiveInput();
             });
         });
-        
+
         // 初始化
         updateActiveInput();
 
