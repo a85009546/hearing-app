@@ -177,6 +177,10 @@
             box-shadow: 0 6px 12px rgba(0,0,0,0.2);
         }
 
+        .key.double-wide {
+            grid-column: span 2;
+        }
+
         .result-section {
             background: linear-gradient(135deg, #a8edea, #fed6e3);
             padding: 20px;
@@ -326,9 +330,8 @@
             <button class="key number" onclick="inputNumber(9)">9</button>
             <button class="key clear" onclick="clearAll()">清除全部</button>
             
-            <button class="key number" onclick="inputNumber('00')">00</button>
+            <button class="key number double-wide" onclick="inputNumber('00')">00</button>
             <button class="key number" onclick="inputNumber(0)">0</button>
-            <button class="key action" onclick="calculate()">計算</button>
             <button class="key action" onclick="calculate()">診斷</button>
         </div>
 
