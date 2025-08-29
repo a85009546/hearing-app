@@ -14,7 +14,7 @@
             align-items: center;
             min-height: 100vh;
             margin: 0;
-            overflow: auto; /* Allow scrolling for small screens */
+            overflow: auto;
             -webkit-font-smoothing: antialiased;
             -moz-osx-font-smoothing: grayscale;
         }
@@ -22,10 +22,17 @@
             @apply max-w-lg w-full p-4 sm:p-8 space-y-6 bg-white dark:bg-gray-800 rounded-3xl shadow-2xl;
         }
         .input-grid {
-            @apply grid grid-cols-2 sm:grid-cols-4 gap-2;
+            @apply grid grid-cols-4 gap-4 justify-items-center;
+        }
+        .number-input-container {
+            @apply flex justify-center;
         }
         .number-input {
-            @apply w-full text-center text-2xl sm:text-3xl p-3 border-2 border-gray-300 dark:border-gray-600 rounded-xl bg-gray-50 dark:bg-gray-700 focus:outline-none focus:ring-4 focus:ring-blue-500 focus:border-transparent transition-colors;
+            @apply text-center text-2xl sm:text-3xl p-3 border-2 border-gray-300 dark:border-gray-600 rounded-xl bg-gray-50 dark:bg-gray-700 focus:outline-none focus:ring-4 focus:ring-blue-500 focus:border-transparent transition-colors w-20;
+            color: #1f2937; /* Explicitly set text color */
+        }
+        .dark .number-input {
+            color: #e5e7eb; /* Explicitly set text color for dark mode */
         }
         .keypad-button {
             @apply flex items-center justify-center p-4 sm:p-5 text-2xl sm:text-3xl font-bold rounded-2xl shadow-md transition-transform transform hover:scale-105 active:bg-gray-200 active:shadow-inner;
