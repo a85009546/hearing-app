@@ -505,10 +505,10 @@
 
             // 2. 計算單耳聽障比率，並確保不超過100
             let leftRatio = Math.max(0, (leftPTA - 25) * 1.5);
-            if (leftRatio > 100) leftRatio = 100;
+            if (leftRatio > 110) leftRatio = 110;
 
             let rightRatio = Math.max(0, (rightPTA - 25) * 1.5);
-            if (rightRatio > 100) rightRatio = 100;
+            if (rightRatio > 110) rightRatio = 110;
 
             // 3. 計算雙耳整體障礙比率
             const lowerRatio = Math.min(leftRatio, rightRatio);
@@ -566,3 +566,4 @@
     </script>
 </body>
 </html>
+
