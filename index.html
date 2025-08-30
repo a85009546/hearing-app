@@ -255,6 +255,27 @@
         .message-content button:hover {
             background: #5a6cd4;
         }
+        /* 開發者信息樣式 */
+        .developer-info {
+            position: absolute;
+            bottom: 15px;
+            right: 15px;
+            text-align: right;
+            color: #f3f4f6;
+            font-size: 14px;
+            text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.5);
+            font-family: 'Ma Shan Zheng', cursive;
+        }
+        .developer-info a {
+            color: #f3f4f6;
+            text-decoration: none;
+            transition: color 0.3s ease;
+            font-family: 'Comic Mono', monospace;
+        }
+        .developer-info a:hover {
+            color: #a8edea;
+            text-decoration: underline;
+        }
     </style>
 </head>
 <body>
@@ -352,6 +373,12 @@
             <div class="diagnosis-code" id="diagnosisCode">等待輸入</div>
             <div class="diagnosis-description" id="diagnosisDescription">請輸入年齡及所有8個聽力數值後進行診斷</div>
         </div>
+    </div>
+
+    <!-- 開發者信息 -->
+    <div class="developer-info">
+        <div>開發者 : 魏振庭</div>
+        <div>GitHub : <a href="https://github.com/username" target="_blank">https://github.com/a85009546</a></div>
     </div>
 
     <!-- 訊息彈窗 -->
@@ -566,4 +593,5 @@
     </script>
 </body>
 </html>
+
 
