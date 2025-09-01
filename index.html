@@ -289,27 +289,6 @@
         </div>
 
         <div class="input-section">
-            <div class="ear-group">
-                <div class="ear-title">左耳 (Left Ear)</div>
-                <div class="test-inputs">
-                    <div class="input-group">
-                        <div class="input-label">500Hz</div>
-                        <input type="text" class="input-field" id="left1" maxlength="3" readonly>
-                    </div>
-                    <div class="input-group">
-                        <div class="input-label">1000Hz</div>
-                        <input type="text" class="input-field" id="left2" maxlength="3" readonly>
-                    </div>
-                    <div class="input-group">
-                        <div class="input-label">2000Hz</div>
-                        <input type="text" class="input-field" id="left3" maxlength="3" readonly>
-                    </div>
-                    <div class="input-group">
-                        <div class="input-label">4000Hz</div>
-                        <input type="text" class="input-field" id="left4" maxlength="3" readonly>
-                    </div>
-                </div>
-            </div>
             
             <div class="ear-group">
                 <div class="ear-title">右耳 (Right Ear)</div>
@@ -329,6 +308,28 @@
                     <div class="input-group">
                         <div class="input-label">4000Hz</div>
                         <input type="text" class="input-field" id="right4" maxlength="3" readonly>
+                    </div>
+                </div>
+            </div>
+
+            <div class="ear-group">
+                <div class="ear-title">左耳 (Left Ear)</div>
+                <div class="test-inputs">
+                    <div class="input-group">
+                        <div class="input-label">500Hz</div>
+                        <input type="text" class="input-field" id="left1" maxlength="3" readonly>
+                    </div>
+                    <div class="input-group">
+                        <div class="input-label">1000Hz</div>
+                        <input type="text" class="input-field" id="left2" maxlength="3" readonly>
+                    </div>
+                    <div class="input-group">
+                        <div class="input-label">2000Hz</div>
+                        <input type="text" class="input-field" id="left3" maxlength="3" readonly>
+                    </div>
+                    <div class="input-group">
+                        <div class="input-label">4000Hz</div>
+                        <input type="text" class="input-field" id="left4" maxlength="3" readonly>
                     </div>
                 </div>
             </div>
@@ -358,13 +359,23 @@
         </div>
 
         <div class="result-section">
+            <!-- 顯示左右耳 PTA -->
             <div class="result-group">
-                <div class="result-title">左耳聽障比率</div>
-                <div id="leftRatioDisplay">--</div>
+                <div class="result-title">右耳平均聽力 (PTA)</div>
+                <div id="rightAvgDbDisplay">--</div>
             </div>
+            <div class="result-group">
+                <div class="result-title">左耳平均聽力 (PTA)</div>
+                <div id="leftAvgDbDisplay">--</div>
+            </div>
+            <!-- 顯示聽障比率 -->
             <div class="result-group">
                 <div class="result-title">右耳聽障比率</div>
                 <div id="rightRatioDisplay">--</div>
+            </div>
+            <div class="result-group">
+                <div class="result-title">左耳聽障比率</div>
+                <div id="leftRatioDisplay">--</div>
             </div>
             <div class="result-group">
                 <div class="result-title">雙耳整體障礙比率</div>
@@ -394,8 +405,8 @@
 
     <script>
         let currentInputIndex = -1; // -1 for age input
-        const inputFields = ['left1', 'left2', 'left3', 'left4', 'right1', 'right2', 'right3', 'right4'];
-        const inputLabels = ['左耳 500Hz', '左耳 1000Hz', '左耳 2000Hz', '左耳 4000Hz', '右耳 500Hz', '右耳 1000Hz', '右耳 2000Hz', '右耳 4000Hz'];
+        const inputFields = ['right1', 'right2', 'right3', 'right4', 'left1', 'left2', 'left3', 'left4'];
+        const inputLabels = ['右耳 500Hz', '右耳 1000Hz', '右耳 2000Hz', '右耳 4000Hz', '左耳 500Hz', '左耳 1000Hz', '左耳 2000Hz', '左耳 4000Hz'];
         const messageBox = document.getElementById('messageBox');
         const messageText = document.getElementById('messageText');
         const ageInput = document.getElementById('ageInput');
@@ -424,7 +435,7 @@
             } else if (currentInputIndex < inputLabels.length) {
                 document.querySelector('.current-input').textContent = `當前輸入：${inputLabels[currentInputIndex]}`;
             } else {
-                 document.querySelector('.current-input').textContent = '所有數值已輸入';
+                document.querySelector('.current-input').textContent = '所有數值已輸入';
             }
         }
 
@@ -512,12 +523,17 @@
             document.getElementById('diagnosisDescription').textContent = '請輸入年齡及所有8個聽力數值後進行診斷';
         }
 
+        
+
         // 診斷計算邏輯
         function calculate() {
             const age = parseInt(ageInput.value);
             const values = inputFields.map(id => {
                 const value = document.getElementById(id).value;
                 return value === '' ? 0 : parseFloat(value);
+                // 🔧 大於 110 的值，直接當成 110
+                if (num > 110) num = 110;
+                return num;
             });
             
             const allFilled = inputFields.every(id => document.getElementById(id).value !== '') && ageInput.value !== '';
@@ -530,15 +546,15 @@
             }
 
             // 1. 計算左右耳的PTA
-            const leftPTA = (values[0] + values[1] + values[2] + values[3]) / 4;
-            const rightPTA = (values[4] + values[5] + values[6] + values[7]) / 4;
+            const rightPTA = (values[0] + values[1] + values[2] + values[3]) / 4;
+            const leftPTA = (values[4] + values[5] + values[6] + values[7]) / 4;
 
             // 2. 計算單耳聽障比率，並確保不超過100
             let leftRatio = Math.max(0, (leftPTA - 25) * 1.5);
-            if (leftRatio > 110) leftRatio = 110;
+            if (leftRatio > 100) leftRatio = 100;
 
             let rightRatio = Math.max(0, (rightPTA - 25) * 1.5);
-            if (rightRatio > 110) rightRatio = 110;
+            if (rightRatio > 100) rightRatio = 100;
 
             // 3. 計算雙耳整體障礙比率
             const lowerRatio = Math.min(leftRatio, rightRatio);
@@ -546,6 +562,8 @@
             const overallRatio = (lowerRatio * 5 + higherRatio * 1) / 6;
 
             // 4. 顯示計算結果
+            document.getElementById('rightAvgDbDisplay').textContent = `${rightPTA.toFixed(1)} dB`;
+            document.getElementById('leftAvgDbDisplay').textContent  = `${leftPTA.toFixed(1)} dB`;
             document.getElementById('leftRatioDisplay').textContent = `${leftRatio.toFixed(1)}%`;
             document.getElementById('rightRatioDisplay').textContent = `${rightRatio.toFixed(1)}%`;
             document.getElementById('overallRatioDisplay').textContent = `${overallRatio.toFixed(1)}%`;
@@ -596,7 +614,6 @@
     </script>
 </body>
 </html>
-
 
 
 
