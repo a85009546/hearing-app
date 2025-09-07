@@ -282,12 +282,6 @@
 <body>
     <div class="container">
         <h1 class="title">聽力測試診斷計算器</h1>
-        
-<!--         <div class="age-input-group">
-            <div class="input-label">請輸入您的年齡</div>
-            <input type="text" class="input-field" id="ageInput" maxlength="3" onfocus="currentInputIndex = -1; setActiveInput();">
-        </div> -->
-
         <div class="age-input-group">
             <div class="input-label">請選擇年齡範圍</div>
             <div style="display:flex; gap:20px; justify-content:center;">
@@ -301,6 +295,7 @@
         </div>
 
         <div class="input-section">
+            
             <div class="ear-group">
                 <div class="ear-title">右耳 (Right Ear)</div>
                 <div class="test-inputs">
@@ -346,7 +341,7 @@
             </div>
         </div>
 
-<!--         <div class="current-input">當前輸入：年齡</div> -->
+        <div class="current-input">當前輸入：年齡</div>
 
         <div class="keypad">
             <button class="key number" onclick="inputNumber(1)">1</button>
@@ -394,13 +389,13 @@
             </div>
             <hr style="border: 1px solid #ccc; margin: 15px 0;">
             <div class="diagnosis-code" id="diagnosisCode">等待輸入</div>
-            <div class="diagnosis-description" id="diagnosisDescription">請輸入年齡及所有8個聽力數值後進行診斷</div>
+            <div class="diagnosis-description" id="diagnosisDescription">請選擇年齡範圍及輸入所有8個聽力數值後進行診斷</div>
         </div>
 
         <!-- 開發者信息 -->
         <div class="developer-info">
             <div>開發者 : 魏振庭</div>
-            <div><a href="https://github.com/username" target="_blank">https://github.com/a85009546/</a></div>
+            <div><a href="https://github.com/a85009546/" target="_blank">https://github.com/a85009546/</a></div>
         </div>
     </div>
 
@@ -420,7 +415,6 @@
         const inputLabels = ['右耳 500Hz', '右耳 1000Hz', '右耳 2000Hz', '右耳 4000Hz', '左耳 500Hz', '左耳 1000Hz', '左耳 2000Hz', '左耳 4000Hz'];
         const messageBox = document.getElementById('messageBox');
         const messageText = document.getElementById('messageText');
-        const ageInput = document.getElementById('ageInput');
 
         // 顯示訊息彈窗
         function showMessage(text) {
@@ -442,7 +436,7 @@
         // 更新當前輸入提示
         function updateCurrentInput() {
             if (currentInputIndex === -1) {
-                document.querySelector('.current-input').textContent = '當前輸入：年齡';
+                document.querySelector('.current-input').textContent = '請先選擇年齡範圍';
             } else if (currentInputIndex < inputLabels.length) {
                 document.querySelector('.current-input').textContent = `當前輸入：${inputLabels[currentInputIndex]}`;
             } else {
@@ -451,37 +445,14 @@
         }
 
         // 設置當前輸入框的高亮
-        // function setActiveInput() {
-        //     // 移除所有高亮
-        //     ageInput.classList.remove('active');
-        //     inputFields.forEach(id => {
-        //         document.getElementById(id).classList.remove('active');
-        //     });
-            
-        //     // 添加當前輸入框的高亮
-        //     if (currentInputIndex === -1) {
-        //         ageInput.classList.add('active');
-        //     } else if (currentInputIndex < inputFields.length) {
-        //         document.getElementById(inputFields[currentInputIndex]).classList.add('active');
-        //     }
-        // }
-
-        // 設置當前輸入框的高亮
         function setActiveInput() {
             // 移除所有高亮
             inputFields.forEach(id => {
                 document.getElementById(id).classList.remove('active');
             });
-        
-            // 如果有 ageInput 才處理（現在你用 radio，就可以跳過這個判斷）
-            if (ageInput) {
-                ageInput.classList.remove('active');
-            }
-        
+
             // 添加當前輸入框的高亮
-            if (currentInputIndex === -1 && ageInput) {
-                ageInput.classList.add('active');
-            } else if (currentInputIndex < inputFields.length) {
+            if (currentInputIndex >= 0 && currentInputIndex < inputFields.length) {
                 document.getElementById(inputFields[currentInputIndex]).classList.add('active');
             }
         }
@@ -489,9 +460,7 @@
         // 輸入數字
         function inputNumber(num) {
             let currentField;
-            if (currentInputIndex === -1) {
-                currentField = ageInput;
-            } else if (currentInputIndex < inputFields.length) {
+            if  (currentInputIndex < inputFields.length) {
                 currentField = document.getElementById(inputFields[currentInputIndex]);
             } else {
                 showMessage('所有輸入欄位都已填寫完畢。');
@@ -507,9 +476,7 @@
         // 刪除數字
         function deleteNumber() {
             let currentField;
-            if (currentInputIndex === -1) {
-                currentField = ageInput;
-            } else if (currentInputIndex < inputFields.length) {
+            if (currentInputIndex < inputFields.length) {
                 currentField = document.getElementById(inputFields[currentInputIndex]);
             } else {
                 return;
@@ -519,7 +486,11 @@
 
         // 下一個輸入框
         function nextInput() {
-            if (currentInputIndex < inputFields.length - 1) {
+            if (currentInputIndex === -1) {
+                currentInputIndex = 0; // 直接跳到第一個耳朵輸入框
+                updateCurrentInput();
+                setActiveInput();
+            } else if (currentInputIndex < inputFields.length - 1) {
                 currentInputIndex++;
                 updateCurrentInput();
                 setActiveInput();
@@ -530,7 +501,6 @@
 
         // 清除所有數值
         function clearAll() {
-            ageInput.value = '';
             inputFields.forEach(id => {
                 document.getElementById(id).value = '';
             });
@@ -544,36 +514,27 @@
             document.getElementById('overallRatioDisplay').textContent = '--';
             document.getElementById('diagnosisCode').textContent = '等待輸入';
             document.getElementById('diagnosisDescription').textContent = '請輸入年齡及所有8個聽力數值後進行診斷';
-            document.getElementById(id).addEventListener('click', () => {
-            currentInputIndex = index;
-            updateCurrentInput();
-            setActiveInput();  // ✅ 加這個
-            });
         }
 
         
 
         // 診斷計算邏輯
         function calculate() {
-            // const age = parseInt(ageInput.value);
-
-             // 取得年齡組別
+            // 讀取年齡範圍
             const ageGroup = document.querySelector('input[name="ageGroup"]:checked');
             if (!ageGroup) {
-                showMessage('請先選擇年齡範圍。');
+                showMessage('請先選擇年齡範圍');
                 return;
             }
-            const isAdult = (ageGroup.value === 'adult'); // 六歲以上 = true
-            
+            const age = (ageGroup.value === 'adult') ? 6 : 5; // 六歲以上用 6，未滿六歲用 5
             const values = inputFields.map(id => {
-                const value = document.getElementById(id).value;
-                return value === '' ? 0 : parseFloat(value);
-                // 🔧 大於 110 的值，直接當成 110
-                if (num > 110) num = 110;
+                let num = parseFloat(document.getElementById(id).value);
+                if (isNaN(num)) num = 0;
+                if (num > 110) num = 110;  // 超過 110 就當 110
                 return num;
             });
             
-            const allFilled = inputFields.every(id => document.getElementById(id).value !== '') && ageInput.value !== '';
+            const allFilled = inputFields.every(id => document.getElementById(id).value !== '');
             
             if (!allFilled) {
                 const filledCount = inputFields.filter(id => document.getElementById(id).value !== '').length;
@@ -615,10 +576,10 @@
             } else if (overallRatio >= 70.1 && overallRatio <= 90.0) {
                 diagnosisCode = 'b230.2';
                 diagnosisDesc = '重度聽力障礙：雙耳整體障礙比率介於70.1至90.0，建議立即進行詳細評估。';
-            } else if (overallRatio >= 45.0 && overallRatio <= 70.0 && isAdult) {
+            } else if (overallRatio >= 45.0 && overallRatio <= 70.0 && age >= 6) {
                 diagnosisCode = 'b230.1 - 1';
                 diagnosisDesc = '中度聽力障礙（六歲以上）：雙耳整體障礙比率介於45.0至70.0，影響日常溝通，建議考慮使用助聽設備。';
-            } else if (overallRatio >= 22.5 && overallRatio <= 70.0 && !isAdult) {
+            } else if (overallRatio >= 22.5 && overallRatio <= 70.0 && age < 6) {
                 diagnosisCode = 'b230.1 - 2';
                 diagnosisDesc = '中度聽力障礙（未滿六歲）：雙耳整體障礙比率介於22.5至70.0，對語言發展影響較大，建議及早進行介入治療。';
             } else {
@@ -640,21 +601,17 @@
         });
 
         // 針對年齡輸入框的點擊事件
-        // ageInput.addEventListener('click', () => {
-        //     currentInputIndex = -1;
-        //     updateCurrentInput();
-        //     setActiveInput();
-        // });
+        ageInput.addEventListener('click', () => {
+            currentInputIndex = -1;
+            updateCurrentInput();
+            setActiveInput();
+        });
 
         // 初始化程式
         init();
     </script>
 </body>
 </html>
-
-
-
-
 
 
 
