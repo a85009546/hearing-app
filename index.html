@@ -544,6 +544,11 @@
             document.getElementById('overallRatioDisplay').textContent = '--';
             document.getElementById('diagnosisCode').textContent = '等待輸入';
             document.getElementById('diagnosisDescription').textContent = '請輸入年齡及所有8個聽力數值後進行診斷';
+            document.getElementById(id).addEventListener('click', () => {
+            currentInputIndex = index;
+            updateCurrentInput();
+            setActiveInput();  // ✅ 加這個
+            });
         }
 
         
@@ -646,6 +651,7 @@
     </script>
 </body>
 </html>
+
 
 
 
