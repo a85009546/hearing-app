@@ -283,13 +283,24 @@
     <div class="container">
         <h1 class="title">聽力測試診斷計算器</h1>
         
-        <div class="age-input-group">
+<!--         <div class="age-input-group">
             <div class="input-label">請輸入您的年齡</div>
             <input type="text" class="input-field" id="ageInput" maxlength="3" onfocus="currentInputIndex = -1; setActiveInput();">
+        </div> -->
+
+        <div class="age-input-group">
+            <div class="input-label">請選擇年齡範圍</div>
+            <div style="display:flex; gap:20px; justify-content:center;">
+                <label>
+                    <input type="radio" name="ageGroup" value="adult"> 六歲以上
+                </label>
+                <label>
+                    <input type="radio" name="ageGroup" value="child"> 未滿六歲
+                </label>
+            </div>
         </div>
 
         <div class="input-section">
-            
             <div class="ear-group">
                 <div class="ear-title">右耳 (Right Ear)</div>
                 <div class="test-inputs">
@@ -335,7 +346,7 @@
             </div>
         </div>
 
-        <div class="current-input">當前輸入：年齡</div>
+<!--         <div class="current-input">當前輸入：年齡</div> -->
 
         <div class="keypad">
             <button class="key number" onclick="inputNumber(1)">1</button>
@@ -389,7 +400,7 @@
         <!-- 開發者信息 -->
         <div class="developer-info">
             <div>開發者 : 魏振庭</div>
-            <div><a href="https://github.com/username" target="_blank">https://github.com/a85009546</a></div>
+            <div><a href="https://github.com/username" target="_blank">https://github.com/a85009546/</a></div>
         </div>
     </div>
 
@@ -527,7 +538,16 @@
 
         // 診斷計算邏輯
         function calculate() {
-            const age = parseInt(ageInput.value);
+            // const age = parseInt(ageInput.value);
+
+             // 取得年齡組別
+            const ageGroup = document.querySelector('input[name="ageGroup"]:checked');
+            if (!ageGroup) {
+                showMessage('請先選擇年齡範圍。');
+                return;
+            }
+            const isAdult = (ageGroup.value === 'adult'); // 六歲以上 = true
+            
             const values = inputFields.map(id => {
                 const value = document.getElementById(id).value;
                 return value === '' ? 0 : parseFloat(value);
@@ -578,10 +598,10 @@
             } else if (overallRatio >= 70.1 && overallRatio <= 90.0) {
                 diagnosisCode = 'b230.2';
                 diagnosisDesc = '重度聽力障礙：雙耳整體障礙比率介於70.1至90.0，建議立即進行詳細評估。';
-            } else if (overallRatio >= 45.0 && overallRatio <= 70.0 && age >= 6) {
+            } else if (overallRatio >= 45.0 && overallRatio <= 70.0 && isAdult) {
                 diagnosisCode = 'b230.1 - 1';
                 diagnosisDesc = '中度聽力障礙（六歲以上）：雙耳整體障礙比率介於45.0至70.0，影響日常溝通，建議考慮使用助聽設備。';
-            } else if (overallRatio >= 22.5 && overallRatio <= 70.0 && age < 6) {
+            } else if (overallRatio >= 22.5 && overallRatio <= 70.0 && !isAdult) {
                 diagnosisCode = 'b230.1 - 2';
                 diagnosisDesc = '中度聽力障礙（未滿六歲）：雙耳整體障礙比率介於22.5至70.0，對語言發展影響較大，建議及早進行介入治療。';
             } else {
@@ -614,6 +634,7 @@
     </script>
 </body>
 </html>
+
 
 
 
