@@ -466,6 +466,26 @@
         //     }
         // }
 
+        // 設置當前輸入框的高亮
+        function setActiveInput() {
+            // 移除所有高亮
+            inputFields.forEach(id => {
+                document.getElementById(id).classList.remove('active');
+            });
+        
+            // 如果有 ageInput 才處理（現在你用 radio，就可以跳過這個判斷）
+            if (ageInput) {
+                ageInput.classList.remove('active');
+            }
+        
+            // 添加當前輸入框的高亮
+            if (currentInputIndex === -1 && ageInput) {
+                ageInput.classList.add('active');
+            } else if (currentInputIndex < inputFields.length) {
+                document.getElementById(inputFields[currentInputIndex]).classList.add('active');
+            }
+        }
+
         // 輸入數字
         function inputNumber(num) {
             let currentField;
@@ -626,6 +646,7 @@
     </script>
 </body>
 </html>
+
 
 
 
