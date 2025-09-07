@@ -451,20 +451,20 @@
         }
 
         // 設置當前輸入框的高亮
-        function setActiveInput() {
-            // 移除所有高亮
-            ageInput.classList.remove('active');
-            inputFields.forEach(id => {
-                document.getElementById(id).classList.remove('active');
-            });
+        // function setActiveInput() {
+        //     // 移除所有高亮
+        //     ageInput.classList.remove('active');
+        //     inputFields.forEach(id => {
+        //         document.getElementById(id).classList.remove('active');
+        //     });
             
-            // 添加當前輸入框的高亮
-            if (currentInputIndex === -1) {
-                ageInput.classList.add('active');
-            } else if (currentInputIndex < inputFields.length) {
-                document.getElementById(inputFields[currentInputIndex]).classList.add('active');
-            }
-        }
+        //     // 添加當前輸入框的高亮
+        //     if (currentInputIndex === -1) {
+        //         ageInput.classList.add('active');
+        //     } else if (currentInputIndex < inputFields.length) {
+        //         document.getElementById(inputFields[currentInputIndex]).classList.add('active');
+        //     }
+        // }
 
         // 輸入數字
         function inputNumber(num) {
@@ -499,15 +499,7 @@
 
         // 下一個輸入框
         function nextInput() {
-            if (currentInputIndex === -1) {
-                if (ageInput.value !== '') {
-                    currentInputIndex = 0;
-                    updateCurrentInput();
-                    setActiveInput();
-                } else {
-                    showMessage('請先輸入年齡。');
-                }
-            } else if (currentInputIndex < inputFields.length - 1) {
+            if (currentInputIndex < inputFields.length - 1) {
                 currentInputIndex++;
                 updateCurrentInput();
                 setActiveInput();
@@ -623,17 +615,18 @@
         });
 
         // 針對年齡輸入框的點擊事件
-        ageInput.addEventListener('click', () => {
-            currentInputIndex = -1;
-            updateCurrentInput();
-            setActiveInput();
-        });
+        // ageInput.addEventListener('click', () => {
+        //     currentInputIndex = -1;
+        //     updateCurrentInput();
+        //     setActiveInput();
+        // });
 
         // 初始化程式
         init();
     </script>
 </body>
 </html>
+
 
 
 
