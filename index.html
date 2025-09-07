@@ -600,11 +600,11 @@
             });
         });
 
-        // 針對年齡輸入框的點擊事件
-        ageInput.addEventListener('click', () => {
-            currentInputIndex = -1;
-            updateCurrentInput();
-            setActiveInput();
+        // 監聽年齡選擇變化，自動重新計算
+        document.querySelectorAll('input[name="ageGroup"]').forEach(radio => {
+            radio.addEventListener('change', () => {
+                calculate();
+            });
         });
 
         // 初始化程式
@@ -612,12 +612,6 @@
     </script>
 </body>
 </html>
-
-
-
-
-
-
 
 
 
